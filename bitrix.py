@@ -10,7 +10,7 @@ def menu():  # Janela 1
     sg.theme('Dark Blue 3')
     layout = [[sg.Text('Bem-vindo(a) ao App Bitrix PM !!\n'
                        'O que deseja fazer?:\n')],
-              [sg.Button('Criar tasks'), sg.Button('Campo CTI'), sg.Button('Cancelar')],
+              [sg.Button('Criar tasks'), sg.Button('Atualizar'), sg.Button('Cancelar')],
               [sg.Text('\nIndicium Tech - 2022', size=[75, 5], justification='center')]]
     return sg.Window('Menu', layout=layout, finalize=True, size=(500, 180))
 
@@ -48,7 +48,7 @@ def atualizar():  # Janela 5
               [sg.InputText(key='bitrixKey')],
               [sg.Button('OK'), sg.Button('Voltar'), sg.Button('Cancelar')],
               [sg.Text('\nIndicium Tech - 2021', size=[75, 5], justification='center')]]
-    return sg.Window('Bitrix - Lançar campo CTI no Bitrix', layout=layout, finalize=True, size=(600, 300))
+    return sg.Window('Bitrix - Atualizar CTI-Entrega-Produto no Bitrix', layout=layout, finalize=True, size=(600, 300))
 
 
 janela1, janela2, janela4, janela5 = menu(), None, None, None
@@ -62,7 +62,7 @@ while True:
     if window == janela1 and event == 'Criar tasks':
         janela1.close()
         janela2 = criar()
-    if window == janela1 and event == 'Campo CTI':
+    if window == janela1 and event == 'Atualizar':
         janela1.close()
         janela5 = atualizar()
 
@@ -253,9 +253,13 @@ while True:
         for i, row in df1.iterrows():
             idTask = str(row['ID'])
             campoCTI = str(row['CTI'])
+            produto = str(row['Produto'])
+            entrega = str(row['Entrega'])
             payload = json.dumps({
                 "taskId": idTask,
                 "fields": {
+                    "UF_AUTO_685849503501": produto,
+                    "UF_AUTO_733698540809": entrega,
                     "UF_AUTO_977208768718": campoCTI
                 }
             })
