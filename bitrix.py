@@ -96,7 +96,7 @@ while True:
         path_saida = values['-SAIDA-']
         bitrixID = values['bitrixID']
         bitrixKey = values['bitrixKey']
-        df1 = pd.DataFrame(pd.read_excel(path_saida, sheet_name='Tarefas'))
+        df1 = pd.DataFrame(pd.read_excel(path_saida, sheet_name='Export_Bitrix'))
         base_url = "https://indicium.bitrix24.com/rest/" + bitrixID + "/" + bitrixKey + "/"
         task_url_criar = "tasks.task.add"
         url_criar = base_url + task_url_criar
@@ -117,6 +117,8 @@ while True:
             campoCTI = str(row['CTI'])
             prioridade = str(row['Tarefa importante'])
             checklist = str(row['Lista de verificação']).split(';')
+            produto = str(row['Produto'])
+            entrega = str(row['Entrega'])
             if statusApi != 'Sucesso':
                 if 'nan' not in marcadores:
                     payload = json.dumps({
@@ -132,6 +134,8 @@ while True:
                             "ALLOW_TIME_TRACKING": "Y",
                             "TIME_ESTIMATE": tempoEstimado,
                             "TAGS": marcadores,
+                            "UF_AUTO_685849503501": produto,
+                            "UF_AUTO_733698540809": entrega,
                             "UF_AUTO_977208768718": campoCTI
                         }
                     })
@@ -143,13 +147,13 @@ while True:
                     sleep(1)
                     obj = json.loads(response.text)
                     if response.status_code != 200:
-                        df1.loc[i, 'status_api'] = 'Falha na criação da task pela API, ' \
-                                                   'favor verificar se os campos na planilha estão corretos'
+                        erro = (obj['error'])
+                        df1.loc[i, 'status_api'] = erro
                         book = load_workbook(path_saida)
                         writer = pd.ExcelWriter(path_saida, engine='openpyxl')
                         writer.book = book
                         writer.sheets = dict((ws.title, ws) for ws in book.worksheets)
-                        df1.to_excel(writer, "Tarefas", header=True, index=False)
+                        df1.to_excel(writer, "Export_Bitrix", header=True, index=False)
                         writer.save()
                         sleep(1)
                         continue
@@ -161,7 +165,7 @@ while True:
                         writer = pd.ExcelWriter(path_saida, engine='openpyxl')
                         writer.book = book
                         writer.sheets = dict((ws.title, ws) for ws in book.worksheets)
-                        df1.to_excel(writer, "Tarefas", header=True, index=False)
+                        df1.to_excel(writer, "Export_Bitrix", header=True, index=False)
                         writer.save()
 # Criar checklist
                         if 'nan' not in checklist:
@@ -189,6 +193,8 @@ while True:
                             "GROUP_ID": projeto,
                             "ALLOW_TIME_TRACKING": "Y",
                             "TIME_ESTIMATE": tempoEstimado,
+                            "UF_AUTO_685849503501": produto,
+                            "UF_AUTO_733698540809": entrega,
                             "UF_AUTO_977208768718": campoCTI
                         }
                     })
@@ -200,13 +206,13 @@ while True:
                     sleep(1)
                     obj = json.loads(response.text)
                     if response.status_code != 200:
-                        df1.loc[i, 'status_api'] = 'Falha na criação da task pela API, ' \
-                                                   'favor verificar se os campos na planilha estão corretos'
+                        erro = (obj['error'])
+                        df1.loc[i, 'status_api'] = erro
                         book = load_workbook(path_saida)
                         writer = pd.ExcelWriter(path_saida, engine='openpyxl')
                         writer.book = book
                         writer.sheets = dict((ws.title, ws) for ws in book.worksheets)
-                        df1.to_excel(writer, "Tarefas", header=True, index=False)
+                        df1.to_excel(writer, "Export_Bitrix", header=True, index=False)
                         writer.save()
                         sleep(1)
                         continue
@@ -218,7 +224,7 @@ while True:
                         writer = pd.ExcelWriter(path_saida, engine='openpyxl')
                         writer.book = book
                         writer.sheets = dict((ws.title, ws) for ws in book.worksheets)
-                        df1.to_excel(writer, "Tarefas", header=True, index=False)
+                        df1.to_excel(writer, "Export_Bitrix", header=True, index=False)
                         writer.save()
 # Criar checklist
                         if 'nan' not in checklist:
@@ -240,7 +246,7 @@ while True:
         path_saida = values['-SAIDA-']
         bitrixID = values['bitrixID']
         bitrixKey = values['bitrixKey']
-        df1 = pd.DataFrame(pd.read_excel(path_saida, sheet_name='Tarefas'))
+        df1 = pd.DataFrame(pd.read_excel(path_saida, sheet_name='Export_Bitrix'))
         base_url = "https://indicium.bitrix24.com/rest/" + bitrixID + "/" + bitrixKey + "/"
         task_url = "tasks.task.update"
         url = base_url + task_url
