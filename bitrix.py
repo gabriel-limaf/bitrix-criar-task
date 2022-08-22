@@ -104,7 +104,7 @@ while True:
         url_checklist = base_url + task_url_checklist
         for i, row in df1.iterrows():
             statusApi = str(row['status_api'])
-            nomeTask = str(row['Task'])
+            nomeTask = str(row['Nome'])
             descricao = str(row['Descrição'])
             responsavel = str(row['Responsável'])
             deadline = str(row['Prazo final'])
