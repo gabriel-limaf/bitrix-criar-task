@@ -110,10 +110,10 @@ while True:
             deadline = str(row['Prazo final'])
             tempoEstimado = str(row['Horas estimadas'])
             criadoPor = str(row['Criada por'])
-            participantes = str(row['Participantes']).split(';')
-            observadores = str(row['Observadores']).split(';')
+            participantes = str(row['Participantes']).split(',')
+            observadores = str(row['Observadores']).split(',')
             projeto = str(row['Projeto'])
-            marcadores = str(row['Marcadores']).split(';')
+            marcadores = str(row['Marcadores']).split(',')
             campoCTI = str(row['CTI'])
             prioridade = str(row['Tarefa importante'])
             checklist = str(row['Lista de verificação']).split(';')
@@ -147,26 +147,14 @@ while True:
                     sleep(1)
                     obj = json.loads(response.text)
                     if response.status_code != 200:
-                        erro = (obj['error'])
+                        erro = (obj['error_description'])
                         df1.loc[i, 'status_api'] = erro
-                        book = load_workbook(path_saida)
-                        writer = pd.ExcelWriter(path_saida, engine='openpyxl')
-                        writer.book = book
-                        writer.sheets = dict((ws.title, ws) for ws in book.worksheets)
-                        df1.to_excel(writer, "Export_Bitrix", header=True, index=False)
-                        writer.save()
                         sleep(1)
                         continue
                     else:
                         idSaida = (obj['result']['task']['id'])
                         df1.loc[i, 'status_api'] = 'Sucesso'
                         df1.loc[i, 'ID'] = idSaida
-                        book = load_workbook(path_saida)
-                        writer = pd.ExcelWriter(path_saida, engine='openpyxl')
-                        writer.book = book
-                        writer.sheets = dict((ws.title, ws) for ws in book.worksheets)
-                        df1.to_excel(writer, "Export_Bitrix", header=True, index=False)
-                        writer.save()
 # Criar checklist
                         if 'nan' not in checklist:
                             for x in checklist:
@@ -206,26 +194,14 @@ while True:
                     sleep(1)
                     obj = json.loads(response.text)
                     if response.status_code != 200:
-                        erro = (obj['error'])
+                        erro = (obj['error_description'])
                         df1.loc[i, 'status_api'] = erro
-                        book = load_workbook(path_saida)
-                        writer = pd.ExcelWriter(path_saida, engine='openpyxl')
-                        writer.book = book
-                        writer.sheets = dict((ws.title, ws) for ws in book.worksheets)
-                        df1.to_excel(writer, "Export_Bitrix", header=True, index=False)
-                        writer.save()
                         sleep(1)
                         continue
                     else:
                         idSaida = (obj['result']['task']['id'])
                         df1.loc[i, 'status_api'] = 'Sucesso'
                         df1.loc[i, 'ID'] = idSaida
-                        book = load_workbook(path_saida)
-                        writer = pd.ExcelWriter(path_saida, engine='openpyxl')
-                        writer.book = book
-                        writer.sheets = dict((ws.title, ws) for ws in book.worksheets)
-                        df1.to_excel(writer, "Export_Bitrix", header=True, index=False)
-                        writer.save()
 # Criar checklist
                         if 'nan' not in checklist:
                             for x in checklist:
@@ -238,6 +214,12 @@ while True:
                                 response = requests.request("POST", url_checklist, headers=headers, data=payload)
                                 print(response.text)
                                 sleep(1)
+        book = load_workbook(path_saida)
+        writer = pd.ExcelWriter(path_saida, engine='openpyxl')
+        writer.book = book
+        writer.sheets = dict((ws.title, ws) for ws in book.worksheets)
+        df1.to_excel(writer, "Export_Bitrix", header=True, index=False)
+        writer.save()
         janela2.close()
         janela4 = sucesso()
 
